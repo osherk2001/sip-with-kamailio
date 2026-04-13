@@ -159,7 +159,27 @@ services:
         condition: service_healthy
     networks:
       - opensearch-net
+ 
+ 
+  fluent-bit:
+    image: fluent/fluent-bit:3.0
+    container_name: fluent-bit
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ./fluent-bit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
+    environment:
+      - OPENSEARCH_USER=admin
+      - OPENSEARCH_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+    depends_on:
+      opensearch-node1:
+        condition: service_healthy
+    networks:
+      - opensearch-net
 
+
+      
 volumes:
   opensearch-data1:
   opensearch-data2:
